@@ -1,0 +1,72 @@
+# Makefile: https://www.gnu.org/software/make/manual/make.html
+
+# Define the C compiler to use
+CC = gcc
+# Define compiler flags
+# Compiler flags for warnings, errors and GNU extensions
+CFLAGS = -Wvla -Wextra -Werror -D_GNU_SOURCE
+INCLUDE = -I./include -I../lib
+
+# Directories
+BIN_DIR = bin
+BUILD_DIR = build
+SRC_DIR = src
+TEST_DIR = test
+LIB_DIR = ../lib
+
+# Source files
+SRC_FILES = $(SRC_DIR)/sorting_algorithms.c $(SRC_DIR)/main_ex1.c
+TEST_FILES = $(TEST_DIR)/test_ex1.c
+LIB_FILES = $(LIB_DIR)/unity.c
+
+# Object files
+OBJ_FILES = $(BUILD_DIR)/sorting_algorithms.o $(BUILD_DIR)/main_ex1.o $(BUILD_DIR)/test_ex1.o $(BUILD_DIR)/unity.o
+
+# Executables
+EXEC_MAIN = $(BIN_DIR)/main_ex1
+EXEC_TEST = $(BIN_DIR)/test_ex1
+
+# Default target to build everything
+all: $(EXEC_MAIN) $(EXEC_TEST)
+
+# Create build and bin directories if they don't exist
+.PHONY: directories
+directories:
+	@mkdir -p $(BUILD_DIR) $(BIN_DIR)
+
+# Rules to build object files
+$(BUILD_DIR)/sorting_algorithms.o: $(SRC_DIR)/sorting_algorithms.c | directories
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(BUILD_DIR)/main_ex1.o: $(SRC_DIR)/main_ex1.c | directories
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(BUILD_DIR)/test_ex1.o: $(TEST_DIR)/test_ex1.c | directories
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(BUILD_DIR)/unity.o: $(LIB_DIR)/unity.c | directories
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+# Rules to link the executables
+$(EXEC_MAIN): $(BUILD_DIR)/sorting_algorithms.o $(BUILD_DIR)/main_ex1.o $(BUILD_DIR)/unity.o | directories
+	$(CC) $(CFLAGS) -I./include $^ -o $@
+
+$(EXEC_TEST): $(BUILD_DIR)/unity.o $(BUILD_DIR)/test_ex1.o | directories
+	$(CC) $(CFLAGS) $(INCLUDE) $^ -o $@
+
+# Rule to run the tests
+test: $(EXEC_TEST)
+	@echo "Running tests..."
+	./$(EXEC_TEST)
+
+# Rule to clean the project
+clean:
+	@echo "Cleaning build and bin directories..."
+	rm -rf $(BUILD_DIR) $(BIN_DIR)
+
+# Help rule with colored output
+help:
+	@echo "Makefile commands:"
+	@echo "  all   - Build the entire project"
+	@echo "  test  - Run the test executable"
+	@echo "  clean - Clean object files and executables"

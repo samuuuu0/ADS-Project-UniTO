@@ -1,0 +1,20 @@
+# the .gitignore file has been cleaned up to allow downloading of all folders.
+# In the original project it contained:
+
+# folders:
+# .vscode
+# build/
+# bin/
+# data/
+
+# files:
+# .o
+# .csv
+# .txt
+# .class
+
+# test files offered by the university: (download available in docs/ADS-Project.md)
+records.csv
+dictionary.txt
+correctme.txt
+italian_dist_graph.csv
